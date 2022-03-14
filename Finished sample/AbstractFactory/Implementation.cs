@@ -112,9 +112,7 @@ namespace AbstractFactory
 
         public void CalculateCosts()
         {
-            Console.WriteLine($"Total costs = " +
-                $"{_orderCosts - (_orderCosts / 100 * _discountService.DiscountPercentage)
-                + _shippingCostsService.ShippingCosts }");
+            Console.WriteLine($"Total costs = {_orderCosts - (_orderCosts / 100 * _discountService.DiscountPercentage) + _shippingCostsService.ShippingCosts }");
         }
     } 
 }
