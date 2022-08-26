@@ -11,6 +11,6 @@ if (instance1 == instance2 && instance2 == Logger.Instance)
 
 instance1.Log($"Message from {nameof(instance1)}");
 // or
-instance1.Log($"Message from {nameof(instance2)}");
+instance2.Log($"Message from {nameof(instance2)}");
 // or
 Logger.Instance.Log($"Message from {nameof(Logger.Instance)}");
