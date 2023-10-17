@@ -1,6 +1,6 @@
-﻿// create a menu implementation
+﻿using Bridge;
 
-using Bridge;
+Console.Title = "Bridge";
 
 var noCoupon = new NoCoupon();
 var oneEuroCoupon = new OneEuroCoupon();
@@ -16,5 +16,5 @@ Console.WriteLine($"Vegetarian menu, no coupon: {vegetarianMenu.CalculatePrice()
 
 vegetarianMenu = new VegetarianMenu(oneEuroCoupon);
 Console.WriteLine($"Vegetarian menu, one euro coupon: {vegetarianMenu.CalculatePrice()} euro.");
- 
+
 Console.ReadKey();

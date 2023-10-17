@@ -1,75 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Facade;
 
-namespace Facade
+/// <summary>
+/// Subsystem class
+/// </summary>
+public class OrderService
 {
-    /// <summary>
-    /// Facade
-    /// </summary>
-    public class DiscountFacade
-    {
-        private readonly OrderService _orderService = new ();
-        private readonly CustomerDiscountBaseService _customerDiscountBaseService = new ();
-        private readonly DayOfTheWeekFactorService _dayOfTheWeekFactorService = new ();
+    public static bool HasEnoughOrders(int customerId) =>
+        // does the customer have enough orders?  
+        // fake calculation for demo purposes
+        customerId > 5;
+}
 
-        public double CalculateDiscountPercentage(int customerId)
+/// <summary>
+/// Subsystem class
+/// </summary>
+public class CustomerDiscountBaseService
+{
+    public double CalculateDiscountBase(int customerId) =>
+        // fake calculation for demo purposes
+        (customerId > 8) ? 10 : 20;
+}
+
+/// <summary>
+/// Subsystem class
+/// </summary>
+public static class DayOfTheWeekFactorService
+{
+    public static double CalculateDayOfTheWeekFactor() =>
+        // fake calculation for demo purposes
+        DateTime.UtcNow.DayOfWeek switch
         {
-            if (!_orderService.HasEnoughOrders(customerId))
-            {
-                return 0;
-            }
+            DayOfWeek.Saturday or DayOfWeek.Sunday => 0.8,
+            _ => 1.2,
+        };
+}
 
-            return _customerDiscountBaseService.CalculateDiscountBase(customerId)
-                * _dayOfTheWeekFactorService.CalculateDayOfTheWeekFactor();
-        }
-    }
-    
-    /// <summary>
-    /// Subsystem class
-    /// </summary>
-    public class OrderService
-    {
-        public bool HasEnoughOrders(int customerId)
-        {
-            // does the customer have enough orders?  
-            // fake calculation for demo purposes
-            return (customerId > 5);
-        }
-    }
+/// <summary>
+/// Facade
+/// </summary>
+public class DiscountFacade
+{
+    //readonly OrderService _orderService = new();
+    readonly CustomerDiscountBaseService _customerDiscountBaseService = new();
+    //readonly DayOfTheWeekFactorService _dayOfTheWeekFactorService = new();
 
-    /// <summary>
-    /// Subsystem class
-    /// </summary>
-    public class CustomerDiscountBaseService
-    {
-        public double CalculateDiscountBase(int customerId)
-        {
-            // fake calculation for demo purposes
-            return (customerId > 8) ? 10 : 20;
-        }
-    }
-
-
-    /// <summary>
-    /// Subsystem class
-    /// </summary>
-    public class DayOfTheWeekFactorService
-    {
-        public double CalculateDayOfTheWeekFactor()
-        {
-            // fake calculation for demo purposes
-            switch (DateTime.UtcNow.DayOfWeek)
-            {
-                case DayOfWeek.Saturday:
-                case DayOfWeek.Sunday:
-                    return 0.8;                
-                default:
-                    return 1.2; 
-            }
-        }
-    }
-
+    public double CalculateDiscountPercentage(int customerId) => OrderService.HasEnoughOrders(customerId)
+            ? _customerDiscountBaseService.CalculateDiscountBase(customerId)
+                * DayOfTheWeekFactorService.CalculateDayOfTheWeekFactor()
+            : 0;
 }

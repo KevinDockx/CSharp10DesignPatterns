@@ -1,5 +1,7 @@
 ﻿using Mediator;
 
+Console.Title = "Mediator";
+
 TeamChatRoom teamChatroom = new();
 
 var sven = new Lawyer("Sven");
@@ -19,3 +21,5 @@ sven.Send("On it!");
 sven.Send("Ann", "Could you join me in a Teams call?");
 sven.Send("Ann", "All good :)");
 ann.SendTo<AccountManager>("The file was approved!");
+
+Console.ReadKey();

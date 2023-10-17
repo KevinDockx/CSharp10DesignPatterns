@@ -40,7 +40,7 @@ public class DocumentTitleHandler : IHandler<Document>
 
     public void Handle(Document document)
     {
-        if (document.Title.Length == 0)
+        if (document.Title?.Length == 0)
         {
             // validation doesn't check out
             throw new ValidationException(

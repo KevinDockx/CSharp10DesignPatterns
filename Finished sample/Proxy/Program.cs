@@ -1,4 +1,5 @@
-﻿
+﻿Console.Title = "Proxy";
+
 // without proxy
 Console.WriteLine("Constructing document.");
 var myDocument = new Proxy.Document("MyDocument.pdf");
@@ -28,3 +29,5 @@ Console.WriteLine("Constructing protected document proxy.");
 myProtectedDocumentProxy = new Proxy.ProtectedDocumentProxy("MyDocument.pdf", "AnotherRole");
 Console.WriteLine("Protected document proxy constructed.");
 myProtectedDocumentProxy.DisplayDocument();
+
+Console.ReadKey();
