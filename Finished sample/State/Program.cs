@@ -1,5 +1,7 @@
 ﻿using State;
 
+Console.Title = "State";
+
 BankAccount bankAccount = new();
 bankAccount.Deposit(100);
 bankAccount.Withdraw(500);
@@ -14,3 +16,4 @@ bankAccount.Withdraw(3000);
 bankAccount.Deposit(3000);
 // should still be in regular
 bankAccount.Deposit(100);
+Console.ReadKey();

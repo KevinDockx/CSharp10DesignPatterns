@@ -1,6 +1,8 @@
-﻿// instantiate mail services
-using Decorator;
+﻿using Decorator;
 
+Console.Title = "Decorator";
+
+// instantiate mail services
 var cloudMailService = new CloudMailService();
 cloudMailService.SendMail("Hi there.");
 

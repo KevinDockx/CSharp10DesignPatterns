@@ -1,12 +1,13 @@
-﻿using ChainOfResponsibility;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using ChainOfResponsibility;
 
-var validDocument = new Document("How to Avoid Java Development", 
+Console.Title = "Chain of Responsibility";
+
+var validDocument = new Document("How to Avoid Java Development",
     DateTimeOffset.UtcNow, true, true);
-var invalidDocument = new Document("How to Avoid Java Development", 
+var invalidDocument = new Document("How to Avoid Java Development",
     DateTimeOffset.UtcNow, false, true);
 
-// chain a set of handlers
 var documentHandlerChain = new DocumentTitleHandler();
 documentHandlerChain
     .SetSuccessor(new DocumentLastModifiedHandler())
@@ -24,3 +25,5 @@ catch (ValidationException validationException)
 {
     Console.WriteLine(validationException.Message);
 }
+
+Console.ReadKey();

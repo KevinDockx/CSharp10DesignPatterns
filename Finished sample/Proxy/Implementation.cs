@@ -1,101 +1,93 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Proxy;
 
-namespace Proxy
+/// <summary>
+/// Subject
+/// </summary>
+public interface IDocument
 {
-    /// <summary>
-    /// RealSubject
-    /// </summary>
-    public class Document : IDocument
+    void DisplayDocument();
+}
+
+/// <summary>
+/// RealSubject
+/// </summary>
+public class Document : IDocument
+{
+    public string? Title { get; set; }
+    public string? Content { get; set; }
+    public int AuthorId { get; set; }
+    public DateTimeOffset LastAccessed { get; set; }
+    readonly string _fileName;
+
+    public Document(string fileName)
     {
-        public string? Title { get; private set; }
-        public string? Content { get; private set; }
-        public int AuthorId { get; private set; }
-        public DateTimeOffset LastAccessed { get; private set; }
-        private string _fileName; 
-         
-        public Document(string fileName)
-        {
-            _fileName = fileName;
-            LoadDocument(fileName);
-        }
-
-        private void LoadDocument(string fileName)
-        {
-            Console.WriteLine("Executing expensive action: loading a file from disk");
-            // fake loading...
-            Thread.Sleep(1000);
-
-            Title = "An expensive document";
-            Content = "Lots and lots of content";
-            AuthorId = 1;
-            LastAccessed = DateTimeOffset.UtcNow;
-        }
-
-        public void DisplayDocument()
-        {
-            Console.WriteLine($"Title: {Title}, Content: {Content}");
-        }
+        _fileName = fileName;
+        LoadDocument(fileName);
     }
 
-    /// <summary>
-    /// Subject
-    /// </summary>
-    public interface IDocument
+    void LoadDocument(string fileName)
     {
-        void DisplayDocument();
+        Console.WriteLine("Executing expensive action: loading a file from disk");
+        // fake loading...
+        Thread.Sleep(1000);
+
+        Title = "An expensive document";
+        Content = "Lots and lots of content";
+        AuthorId = 1;
+        LastAccessed = DateTimeOffset.UtcNow;
     }
 
-    /// <summary>
-    /// Proxy
-    /// </summary>
-    public class DocumentProxy : IDocument
+    public void DisplayDocument() => Console.WriteLine($"Title: {Title}, Content: {Content}");
+}
+
+/// <summary>
+/// Proxy
+/// </summary>
+public class DocumentProxy : IDocument
+{
+    // avoid creating the document until we need it 
+    readonly Lazy<Document> _document;
+    readonly string _fileName;
+
+    public DocumentProxy(string fileName)
     {
-        // avoid creating the document until we need it 
-        private Lazy<Document> _document;
-        private string _fileName;
-
-        public DocumentProxy(string fileName)
-        {
-            _fileName = fileName;
-            _document = new Lazy<Document>(() => new Document(_fileName));
-        }
-
-        public void DisplayDocument()
-        {
-            _document.Value.DisplayDocument();       
-        }
+        _fileName = fileName;
+        _document = new Lazy<Document>(() => new Document(_fileName));
     }
 
-    public class ProtectedDocumentProxy : IDocument
+    public void DisplayDocument() => _document.Value.DisplayDocument();
+}
+
+/// <summary>
+/// Proxy
+/// </summary>
+public class ProtectedDocumentProxy : IDocument
+{
+    readonly string _fileName;
+    readonly string _userRole;
+    readonly DocumentProxy _documentProxy;
+
+    public ProtectedDocumentProxy(string fileName,
+        string userRole)
     {
-        private string _fileName;
-        private string _userRole;
-        private DocumentProxy _documentProxy;
+        _fileName = fileName;
+        _userRole = userRole;
+        _documentProxy = new DocumentProxy(_fileName);
+    }
 
-        public ProtectedDocumentProxy(string fileName, 
-            string userRole)
+    public void DisplayDocument()
+    {
+        Console.WriteLine("Entering DisplayDocument " +
+            $"in {nameof(ProtectedDocumentProxy)}.");
+
+        if (_userRole != "Viewer")
         {
-            _fileName = fileName;
-            _userRole = userRole;
-            _documentProxy = new DocumentProxy(_fileName);
+            throw new UnauthorizedAccessException();
         }
-        
-        public void DisplayDocument()
-        {
-            Console.WriteLine($"Entering DisplayDocument in {nameof(ProtectedDocumentProxy)}.");
 
-            if (_userRole != "Viewer")
-            {
-                throw new UnauthorizedAccessException();
-            }
+        _documentProxy.DisplayDocument();
 
-            _documentProxy.DisplayDocument();
-
-            Console.WriteLine($"Exiting DisplayDocument in {nameof(ProtectedDocumentProxy)}.");
-        }
+        Console.WriteLine("Exiting DisplayDocument " +
+            $"in {nameof(ProtectedDocumentProxy)}.");
     }
 }
